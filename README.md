@@ -1,4 +1,4 @@
 # its
 Extension fro mocha
 
-http://h5js.gitbub.io/its/
+https://h5js.gitbub.io/its/
