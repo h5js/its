@@ -11,6 +11,9 @@
 <script src="its.js" name="script.js">
   mocha.setup('bdd');
   //its(
+  Should(undefined).equal(undefined);;
+  Should(1).ok;;
+  Should(0).ok;;
   Should('abc').equal('abc');;
   Should(function(){throw 1}).throw();;
   setTimeout(function(){
