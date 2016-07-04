@@ -11,8 +11,7 @@
   if(name = script.getAttribute('name')) {
     code += '\n//# sourceURL='+location.origin+location.pathname+'~'+name;
   }
-  window.eval(code);
-
+  
   function make(code) {
     return code.replace(reIts, function(s, indent, code){
       var tests = [], title, ms, param;
@@ -43,4 +42,8 @@
       return s;
     });
   }
+
+  document.addEventListener('DOMContentLoaded', eval.bind(undefined, code));
+  //window.eval(code);
+
 })();
