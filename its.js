@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
   /**
    * normalize(path)
@@ -7,13 +7,13 @@
   var normalize = function (src) {
     var des = [], len, top;
     src = src.split(this);
-    for (var i=0; i< src.length; i++) {
+    for (var i = 0; i < src.length; i++) {
       var sym = src[i];
       if (len = des.length) {
         if (sym != '.') {
-          top = des[len-1];
+          top = des[len - 1];
           if (sym != '..') {
-            if(top == '.' && sym)
+            if (top == '.' && sym)
               des.pop();
             des.push(sym);
           }
@@ -36,18 +36,18 @@
     /\/+/   //reSplit
   );
 
-  var purl = function(url, rel) {
+  var purl = function (url, rel) {
     var ms = url.match(this);
     var origin = ms[1];
     var dir = ms[2];
     var file = ms[3];
 
-    if ( ! origin ) {  //若没有origin, 则是相对的URL
-      if(rel){
+    if (!origin) {  //若没有origin, 则是相对的URL
+      if (rel) {
         ms = rel.match(this);
         origin = ms[1];
 
-        if ( dir[0] != "/" )   //相对目录
+        if (dir[0] != "/")   //相对目录
           dir = ms[2] + dir;
       }
     }
@@ -73,28 +73,28 @@
   var reDone = /\bdone\b/;
 
   function make(code) {
-    return code.replace(reIts, function(s, indent, code){
+    return code.replace(reIts, function (s, indent, code) {
       var tests = [], title, ms, param;
       var cases = code.split(reCases);
-      for(var i=0; i<cases.length; i++){
+      for (var i = 0; i < cases.length; i++) {
         s = cases[i];
         s = s.replace(/^\s*\n|\s*$/g, "");  //去首尾空行
-        title = s.replace(/^\s*|(\s)\s*/g,"$1");    //收缩空白为title
-        if(title) {
+        title = s.replace(/^\s*|(\s)\s*/g, "$1");    //收缩空白为title
+        if (title) {
           title = JSON.stringify(title);
-          if(s.trim() == "wait"){
+          if (s.trim() == "wait") {
             param = "done";
             s = indent + "setTimeout(done, 0)";
           }
-          else if(ms = s.match(reThrow)){
-            s = ms[1]+'(function(){'+ms[2]+'})'+ms[3];
+          else if (ms = s.match(reThrow)) {
+            s = ms[1] + '(function(){' + ms[2] + '})' + ms[3];
             param = '';
           }
           else {
             param = reDone.test(s) ? "done" : "";
           }
           s = s.replace(/^/gm, "  ");    //缩进
-          s = indent+"it("+title+", function("+param+"){\n"+s+"\n"+indent+"});";
+          s = indent + "it(" + title + ", function(" + param + "){\n" + s + "\n" + indent + "});";
           tests.push(s);
         }
       }
@@ -106,20 +106,20 @@
   var home = purl(location.toString());
 
   var script = document.scripts;
-  script = script[script.length-1];
+  script = script[script.length - 1];
 
-  if(script.hasAttribute('its')) {
+  if (script.hasAttribute('its')) {
     var its, url, code;
     its = script.getAttribute('its').split(/\s*[,;]\s*|^\s*|\s*$/);
-    for(var i=0; i<its.length; i++)
-      if(url = its[i]) {
+    for (var i = 0; i < its.length; i++)
+      if (url = its[i]) {
         url = purl(url, home);
         code = get(url);
         code = make(code);
-        code += '\n//# sourceURL='+url;
+        code += '\n//# sourceURL=' + url;
         window.eval(code);
       }
-    if(/\S/.test(code = script.text)) {
+    if (/\S/.test(code = script.text)) {
       code = make(code);
       if (url = script.getAttribute('name')) {
         code += '\n//# sourceURL=' + purl(url, home + '/');
