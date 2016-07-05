@@ -72,31 +72,6 @@
   var reThrow = /(\s*)(.*)(\.should(?:\.not)?\.throw\b.*)/;
   var reDone = /\bdone\b/;
 
-  var home = purl(location.toString());
-
-  var script = document.scripts;
-  script = script[script.length-1];
-  var run = script.getAttribute('run'), url, code;
-  if(run) {
-    run = run.split(/\s*[,;]\s*|^\s*|\s*$/);
-    for(var i=0; i<run.length; i++)
-      if(url = run[i]) {
-        url = purl(url, home);
-        code = get(url);
-        code = make(code);
-        code += '\n//# sourceURL='+url;
-        window.eval(code);
-      }
-  }
-
-  if(script.hasAttribute('its')) {
-    code = make(script.text);
-    if(url = script.getAttribute('name')){
-      code += '\n//# sourceURL=' + purl(url, home+'/');
-    }
-    window.eval(code);
-  }
-
   function make(code) {
     return code.replace(reIts, function(s, indent, code){
       var tests = [], title, ms, param;
@@ -127,5 +102,32 @@
       return s;
     });
   }
+
+  var home = purl(location.toString());
+
+  var script = document.scripts;
+  script = script[script.length-1];
+
+  if(script.hasAttribute('its')) {
+    var its, url, code;
+    its = script.getAttribute('its').split(/\s*[,;]\s*|^\s*|\s*$/);
+    for(var i=0; i<its.length; i++)
+      if(url = its[i]) {
+        url = purl(url, home);
+        code = get(url);
+        code = make(code);
+        code += '\n//# sourceURL='+url;
+        window.eval(code);
+      }
+    if(/\S/.test(code = script.text)) {
+      code = make(code);
+      if (url = script.getAttribute('name')) {
+        code += '\n//# sourceURL=' + purl(url, home + '/');
+      }
+      window.eval(code);
+    }
+  }
+
+  return make;
 
 })();
